@@ -10,7 +10,6 @@ for (var fn of ['dbsize', 'scan', 'type', 'get', 'lrange', 'smembers', 'hgetall'
 module.exports = async function(connection, count, realEach) {
 	console.log('connection', connection);
 	const client = redis.createClient(connection);
-	console.log('client', client);
 
 	const each = async function(data) {
 		var ttl = parseInt(await client.pttlAsync(data._key), 10);
