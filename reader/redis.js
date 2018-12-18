@@ -86,10 +86,10 @@ module.exports = async function(connection, count, realEach) {
 				}
 			}
 		} while (cursor !== '0');
-	catch(err) {
+	} catch(err) {
 	  console.log('ERROR', err)
 	}
-	} finally {
+	finally {
 		client.quit();
 	}
 };
