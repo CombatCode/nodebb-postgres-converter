@@ -22,6 +22,7 @@ module.exports = async function(connection, count, realEach) {
 
 	try {
 		var totalKeys = 0;
+		console.log('totalKeys', totalKeys);
 
 		var cursor = '0';
 		do {
@@ -29,6 +30,7 @@ module.exports = async function(connection, count, realEach) {
 			cursor = result[0];
 
 			totalKeys += result[1].length;
+			console.log('totalKeys', totalKeys);
 
 			for (var key of result[1]) {
 				var type = await client.typeAsync(key);
