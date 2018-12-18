@@ -36,7 +36,9 @@ async function copyDatabase(reader, input, output) {
 			if (copied + skipped !== total) {
 				console.warn('There were ' + (copied + skipped) + ' objects, but ' + total + ' were expected.');
 			}
-		} finally {
+		} 
+		catch (err) {console.log('ERR00R', err)}
+		finally {
 			console.timeEnd('Copy objects');
 		}
 	});
