@@ -42,6 +42,8 @@ module.exports = async function(connection, count, realEach) {
 					totalKeys--;
 				} else if (type === 'zset' && key.endsWith(':likes')) {
 					totalKeys--;
+				} else if (type === 'zset' && key.startsWith('product:likes_boost')) {
+					totalKeys--;
 				} else if (type === 'zset') {
 					totalKeys += await client.zcardAsync(key) - 1;
 					zcardKeys += await client.zcardAsync(key) - 1;
