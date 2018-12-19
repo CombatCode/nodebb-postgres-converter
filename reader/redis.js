@@ -21,6 +21,8 @@ module.exports = async function(connection, count, realEach) {
 
 	try {
 		var totalKeys = 0;
+		var realKeys = 0;
+		var zcardKeys = 0;
 		console.log('totalKeys', totalKeys);
 
 		var cursor = '0';
@@ -29,6 +31,7 @@ module.exports = async function(connection, count, realEach) {
 			cursor = result[0];
 
 			totalKeys += result[1].length;
+			realKeys += result[1].length;
 			console.log('totalKeys', totalKeys);
 
 			for (var key of result[1]) {
@@ -38,6 +41,7 @@ module.exports = async function(connection, count, realEach) {
 					totalKeys--;
 				} else if (type === 'zset') {
 					totalKeys += await client.zcardAsync(key) - 1;
+					zcardKeys += await client.zcardAsync(key) - 1;
 				}
 			}
 		} while (cursor !== '0');
@@ -45,48 +49,48 @@ module.exports = async function(connection, count, realEach) {
 		await count(totalKeys);
 
 		cursor = '0';
-		do {
-			var result = await client.scanAsync(cursor, 'COUNT', '1000');
-			cursor = result[0];
+// 		do {
+// 			var result = await client.scanAsync(cursor, 'COUNT', '1000');
+// 			cursor = result[0];
 
-			for (var key of result[1]) {
-				var type = await client.typeAsync(key);
-				switch (type) {
-					case 'string':
-						if (key.startsWith('sess:')) {
-							continue;
-						}
+// 			for (var key of result[1]) {
+// 				var type = await client.typeAsync(key);
+// 				switch (type) {
+// 					case 'string':
+// 						if (key.startsWith('sess:')) {
+// 							continue;
+// 						}
 
-						await each({
-							_key: key,
-							value: await client.getAsync(key)
-						});
-						break;
-					case 'list':
-						await each({
-							_key: key,
-							array: await client.lrangeAsync(key, '0', '-1')
-						});
-						break;
-					case 'set':
-						await each({
-							_key: key,
-							members: await client.smembersAsync(key)
-						});
-						break;
-					case 'zset':
-						await eachSorted(client, key, each);
-						break;
-					case 'hash':
-						var data = await client.hgetallAsync(key);
-						data._key = key;
-						await each(data);
-						break;
-					default:
-						throw new Exception('Unexpected redis type for key "' + key + '": ' + type);
-				}
-			}
-		} while (cursor !== '0');
+// 						await each({
+// 							_key: key,
+// 							value: await client.getAsync(key)
+// 						});
+// 						break;
+// 					case 'list':
+// 						await each({
+// 							_key: key,
+// 							array: await client.lrangeAsync(key, '0', '-1')
+// 						});
+// 						break;
+// 					case 'set':
+// 						await each({
+// 							_key: key,
+// 							members: await client.smembersAsync(key)
+// 						});
+// 						break;
+// 					case 'zset':
+// 						await eachSorted(client, key, each);
+// 						break;
+// 					case 'hash':
+// 						var data = await client.hgetallAsync(key);
+// 						data._key = key;
+// 						await each(data);
+// 						break;
+// 					default:
+// 						throw new Exception('Unexpected redis type for key "' + key + '": ' + type);
+// 				}
+// 			}
+// 		} while (cursor !== '0');
 	} catch(err) {
 	  console.log('ERROR', err)
 	}
