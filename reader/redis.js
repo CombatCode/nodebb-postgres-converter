@@ -38,6 +38,8 @@ module.exports = async function(connection, count, realEach) {
 
 				if (type === 'string' && key.startsWith('sess:')) {
 					totalKeys--;
+				} else if (type === 'zset' && key.startsWith('ip:recent:')) {
+					totalKeys--;
 				} else if (type === 'zset') {
 					totalKeys += await client.zcardAsync(key) - 1;
 					zcardKeys += await client.zcardAsync(key) - 1;
