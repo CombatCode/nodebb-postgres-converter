@@ -32,8 +32,7 @@ module.exports = async function(connection, count, realEach) {
 
 			totalKeys += result[1].length;
 			realKeys += result[1].length;
-			console.log('totalKeys', totalKeys);
-
+			
 			for (var key of result[1]) {
 				var type = await client.typeAsync(key);
 
@@ -47,7 +46,9 @@ module.exports = async function(connection, count, realEach) {
 		} while (cursor !== '0');
 
 		await count(totalKeys);
-
+		console.log('totalKeys', totalKeys);
+		console.log('realKeys', realKeys);
+		console.log('zcardKeys', zcardKeys);
 		cursor = '0';
 // 		do {
 // 			var result = await client.scanAsync(cursor, 'COUNT', '1000');
