@@ -29,7 +29,7 @@ module.exports = async function(connection, count, realEach) {
 		do {
 			var result = await client.scanAsync(cursor, 'COUNT', '1000');
 			cursor = result[0];
-
+			console.log('totalKeys', totalKeys);
 			totalKeys += result[1].length;
 			realKeys += result[1].length;
 			
@@ -56,8 +56,6 @@ module.exports = async function(connection, count, realEach) {
 		console.log('realKeys', realKeys);
 		console.log('zcardKeys', zcardKeys);
 		cursor = '0';
-		throw "Koniec!";
-		return;
 		do {
 			var result = await client.scanAsync(cursor, 'COUNT', '1000');
 			cursor = result[0];
@@ -88,6 +86,13 @@ module.exports = async function(connection, count, realEach) {
 						});
 						break;
 					case 'zset':
+						if (key.startsWith('ip:recent')) {
+							continue;
+						} else if (key.endsWith(':likes')) {
+							continue;
+						} else if (key.startsWith('product:likes_boost')) {
+							continue;
+						}
 						await eachSorted(client, key, each);
 						break;
 					case 'hash':
