@@ -101,7 +101,7 @@ module.exports = async function(connection, count, realEach) {
 						await each(data);
 						break;
 					default:
-						throw new Exception('Unexpected redis type for key "' + key + '": ' + type);
+						console.error('Unexpected redis type for key "' + key + '": ' + type);
 				}
 			}
 		} while (cursor !== '0');
