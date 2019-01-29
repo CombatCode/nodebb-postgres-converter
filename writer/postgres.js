@@ -17,6 +17,7 @@ async function query(label, conn, query) {
 		await conn.query(query);
 	} catch (ex) {
 		console.error('Query failed: ' + label);
+		console.error('Query: ' + query);
 		throw ex;
 	} finally {
 		console.timeEnd(label);
